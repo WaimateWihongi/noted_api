@@ -1,3 +1,4 @@
+import datetime
 from .base import Base
 
 class Clients(Base):
@@ -6,7 +7,7 @@ class Clients(Base):
 
     def get_client(self, client_id:str) -> dict:
         """Get information about a client"""
-        response = self.get('clients/' + client_id)
+        response = self.get(f'clients/{client_id}')
         if response.status_code == 200:
             return response.json()
         else:
@@ -27,16 +28,4 @@ class Clients(Base):
             return response.json()
         else:
             raise Exception("Could not search for clients," + response.text)
-    
-    def set_keyworker(self, client_id:str, keyworker_id:str) -> bool:
-        """Set the keyworker of a client"""
-        json_data = {
-            client_id: client_id,
-        }
-        response = self.session.put(self.API_URL + 'clients/' + client_id + '/keyworker', json=json_data)
-        if response.status_code == 200:
-            return True
-        else:
-            raise Exception("Could not set keyworker," + response.text)
-
     

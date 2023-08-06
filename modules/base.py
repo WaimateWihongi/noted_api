@@ -62,9 +62,17 @@ class Base:
         else:
             raise Exception(f"Could not get {url}: {request.text}")
     
-    def post(self, url:str, json:dict):
-        request =  self.session.post(self.API_URL + url, json=json)
+    def post(self, url:str, json:dict, return_error:bool=False):
+        """
+        Send a POST request to the API
+        @param url: The URL to send the request to
+        @param json: The JSON data to send
+        @param return_error: Whether to return the error handler's return value on error
+        """
+        request = self.session.post(self.API_URL + url, json=json)
         if request.status_code == 200:
             return request
         else:
+            if return_error:
+                return request
             raise Exception(f"Could not post {url}: {request.text}")

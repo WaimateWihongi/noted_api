@@ -57,12 +57,12 @@ class Users(Base):
     def get_user(self, user_id:str) -> dict:
         """Get information about a user"""
         json_data = {
-            "query": "query getUser($id:Long!){user(id:$id){...UserDetails}}fragment UserDetails on User{id authenticationDetails{username}title firstName lastName name gender registrationNumber phone email shortCode suspended notAllowedToDelete isAdminUser securityRoles{id name key}services{id name}privileges{id name key}deleted}}",
+            "query": '\n    query getUser($id: Long!) {\n  user(id: $id) {\n    ...UserDetails\n  }\n}\n    \n    fragment UserDetails on User {\n  id\n  authenticationDetails {\n    username\n  }\n  title\n  firstName\n  lastName\n  name\n  gender\n  registrationNumber\n  phone\n  email\n  shortCode\n  suspended\n  notAllowedToDelete\n  isAdminUser\n  securityRoles {\n    id\n    name\n    key\n  }\n  services {\n    id\n    name\n  }\n  privileges {\n    id\n    name\n    key\n  }\n  deleted\n}\n    ',
             "variables":{"id": user_id}
         }
-        response = self.get('users/' + user_id)
+        response = self.post('graphql', json=json_data, return_error=True)
         if response.status_code == 200:
-            return response.json()
+            return response.json()["data"]["user"]
         else:
-            raise Exception("Could not get user information," + response.text)
+            raise Exception("Could not get user," + response.text)
     
