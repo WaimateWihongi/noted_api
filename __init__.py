@@ -3,16 +3,16 @@ from .modules.users import Users
 from .modules.clients import Clients
 from .modules.records import Records
 from .modules.keyworkers import Keyworkers
+from .modules.groups import Groups
+from .modules.billing import Billing
+from .modules.client_lists import ClientLists
 
 class API(
     Users,
     Clients,
+    ClientLists,
     Records,
     Keyworkers,
+    Groups,
+    Billing,
 ): pass
-
-if __name__ == "__main__":
-    api = API()
-    api.login("WaimateWihongiTest", "WaimateWihongi123")
-    #print(api.set_keyworker(190222, 2587))
-    print(len(api.get_clients_with_keyworker(2170)))

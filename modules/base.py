@@ -1,5 +1,5 @@
 import logging
-from requests import Session
+from requests import Session, codes as http_codes
 
 class Base:
     API_URL = 'https://api.noted.com/api/v1/'
@@ -11,7 +11,7 @@ class Base:
         self.login_info = None
 
     def response_hook(self, response, *args, **kwargs):
-        if response.status_code == 401:
+        if response.status_code == http_codes.unauthorized:
             logging.error("Unauthorized")
             raise Exception("Unauthorized")
         return response
@@ -55,8 +55,8 @@ class Base:
             logging.error("Login failed")
             return False
     
-    def get(self, url:str):
-        request =  self.session.get(self.API_URL + url)
+    def get(self, url:str, params=None):
+        request =  self.session.get(self.API_URL + url, params=params)
         if request.status_code == 200:
             return request
         else:
@@ -76,3 +76,33 @@ class Base:
             if return_error:
                 return request
             raise Exception(f"Could not post {url}: {request.text}")
+    
+    def delete(self, url:str, json:dict={}, return_error:bool=False):
+        """
+        Send a DELETE request to the API
+        @param url: The URL to send the request to
+        @param json: The JSON data to send
+        @param return_error: Whether to return the error handler's return value on error
+        """
+        request = self.session.delete(self.API_URL + url, json=json)
+        if request.status_code == 200:
+            return request
+        else:
+            if return_error:
+                return request
+            raise Exception(f"Could not delete {url}: {request.text}")
+    
+    def put(self, url:str, json:dict, return_error:bool=False):
+        """
+        Send a PUT request to the API
+        @param url: The URL to send the request to
+        @param json: The JSON data to send
+        @param return_error: Whether to return the error handler's return value on error
+        """
+        request = self.session.put(self.API_URL + url, json=json)
+        if request.status_code == http_codes.ok:
+            return request
+        else:
+            if return_error:
+                return request
+            raise Exception(f"Could not put {url}: {request.text}")
